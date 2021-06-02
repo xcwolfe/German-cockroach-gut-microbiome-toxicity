@@ -1,0 +1,13 @@
+label	group	Treatment	Strain	Interaction	method	nseqs	coverage	sobs	invsimpson	invsimpson_lci	invsimpson_hci
+0.03	Dan-Ctrl-1	Control	Danville	Danville_Water	ave	24390	0.983214	951.706	43.412209	41.789814	45.16567
+0.03	Dan-Ctrl-2	Control	Danville	Danville_Water	ave	24390	0.98452	900.575	13.035001	12.62938	13.467541
+0.03	Dan-Ctrl-3	Control	Danville	Danville_Water	ave	24390	0.984063	968.091	38.258813	36.911211	39.708545
+0.03	Dan-Kan-1	Kanamycin	Danville	Danville_Kanamycin	ave	24390	0.991441	412.963	2.378717	2.34283	2.415719
+0.03	Dan-Kan-2	Kanamycin	Danville	Danville_Kanamycin	ave	24390	0.989463	496.107	2.578505	2.530988	2.627841
+0.03	Dan-Kan-3	Kanamycin	Danville	Danville_Kanamycin	ave	24390	0.987238	658.288	4.662572	4.571647	4.757186
+0.03	Jwax-Ctrl-1	Control	J-wax	J-wax_Water	ave	24390	0.985138	821.02	33.289048	32.259151	34.386878
+0.03	Jwax-Ctrl-2	Control	J-wax	J-wax_Water	ave	24390	0.987091	716.391	8.735329	8.472477	9.015014
+0.03	Jwax-Ctrl-3	Control	J-wax	J-wax_Water	ave	24390	0.983576	833.796	41.789428	40.701063	42.937601
+0.03	Jwax-Kan-1	Kanamycin	J-wax	J-wax_Kanamycin	ave	24390	0.989845	467.086	4.150968	4.05983	4.246292
+0.03	Jwax-Kan-2	Kanamycin	J-wax	J-wax_Kanamycin	ave	24390	0.988571	522.165	16.395519	16.003247	16.807505
+0.03	Jwax-Kan-3	Kanamycin	J-wax	J-wax_Kanamycin	ave	24390	0.991595	458	8.095351	7.945278	8.251201
