@@ -237,7 +237,7 @@ OTU.UF = otu_table(as.matrix(OTU.clean), taxa_are_rows=FALSE)
 tax.UF = tax_table(as.matrix(tax.clean))
 metashannon.UF = sample_data(metashannon)
 metainvsimpson.UF = sample_data(metainvsimpson)
-
+#Run chunk below before running @sample_data
 physeqshannon@sam_data = sample_data(metashannon)
 ```
 
@@ -246,6 +246,12 @@ We then merge these into an object of class phyloseq.
 physeqtest = phyloseq(tax.UF, OTU.UF)
 physeqshannon = phyloseq(OTU.UF, tax.UF,sample_names(metashannon.UF))
 physeqinvsimpson = phyloseq(OTU.UF, tax.UF,sample_names(metainvsimpson.UF))
+
+physeqshannonb <- subset_taxa(physeqshannon, Family != "Blattabacteriaceae")
+physeqshannonb <- prune_samples(sample_sums(physeqshannonb)>=1, physeqshannonb)
+
+physeqinvsimpsonb <- subset_taxa(physeqshannon, Family != "Blattabacteriaceae")
+physeqinvsimpsonb <- prune_samples(sample_sums(physeqshannonb)>=1, physeqshannonb)
 ```
 
 To add the phylogenetic component to UniFrac, we calculate a rooted phylogenetic tree of our OTUs. This takes a long time so we have provided the tree for you (See NJ.Tree.R).
@@ -259,8 +265,8 @@ load("NJ.tree.Rdata")
 
 Add this tree to your physeq object. This object will be what is used in UniFrac calculations.
 ```{r}
-physeqshannon.tree = merge_phyloseq(taxa_names(physeqshannon), NJ.tree)
-physeqinvsimpson.tree = merge_phyloseq(taxa_names(physeqinvsimpson), NJ.tree)
+physeqshannon.tree = merge_phyloseq(taxa_names(physeqshannonb), NJ.tree)
+physeqinvsimpson.tree = merge_phyloseq(taxa_names(physeqinvsimpsonb), NJ.tree)
 ```
 
 We can look at this object and see its components.
@@ -271,11 +277,15 @@ physeqinvsimpson.tree
 
 ```{r}
 plot_tree(physeqshannon.tree, label.tips="taxa_names", ladderize="left", plot.margin=0.3)
-plot_heatmap(physeqshannon, taxa.label = "Genus")
+plot_heatmap(physeqshannonb, taxa.label = "Genus")
 ## top20OTU is created in line 496. Either run the chunk on line 496 first or change the heatmap plot below
 plot_heatmap(top20OTU, taxa.label = "Genus",low="white", high="purple", na.value="grey")
-plot_bar(physeqshannon, x="Sample",y="Abundance", fill = "Genus")
-plot_bar(physeqshannon, "Genus", facet_grid=~Sample)
+
+
+plot_bar(physeqshannonb, x="Sample", fill="Phylum") + geom_bar(aes(color=Phylum, fill=Phylum), stat="identity", position="stack")
+plot_bar(physeqshannonb, x="Sample", fill="Family") + geom_bar(aes(color=Family, fill=Family), stat="identity", position="stack")
+
+plot_bar(physeqshannonb, x="Sample",y="Abundance", fill = "Family")
 ```
 
 ```{r}
@@ -288,21 +298,21 @@ my_colors <- c(
   "#8569D5", "#5E738F","#D1A33D", "#8A7C64", "#599861", "black"
 )
 
-#Help Thor!! group not found???????
 #If you want different taxonomic level, find and replace the taxonomic level listed here
-my_level <- c("Family")
-rm(taxa.summary)
+my_level <- c("Genus")
+#rm(taxa.summary)
 
-ml ="Family"
+ml ="Genus"
 for(ml in my_level){
   print(ml)
 
-  taxa.summary <- physeqshannon %>%
+  
+  taxa.summary <- physeqinvsimpsonb %>%
     tax_glom(taxrank = ml, NArm = FALSE) %>%  # agglomerate at `ml` level
     transform_sample_counts(function(x) {x/sum(x)} ) %>% # Transform to rel. abundance
     psmelt()  %>%                               # Melt to long format
-    group_by(group, get(ml)) %>%
-    summarise(Abundance.average=mean(Abundance))
+    group_by(Sample, get(ml)) %>%
+    summarise(Abundance.average=mean(Abundance),)
     names(taxa.summary)[2] <- ml
   
   physeq.taxa.average <- taxa.summary %>% 
@@ -317,12 +327,12 @@ for(ml in my_level){
   physeq_meta_filtered <- filter(physeq_meta, overall.average>abund_filter)
   str(physeq_meta_filtered)
   
-  physeq_meta_filtered$group = factor(physeq_meta_filtered$group, c("Dan-Ctrl-1", "Dan-Ctrl-2", "Dan-Ctrl-3", "Dan-Kan-1","Dan-Kan-2","Dan-Kan-3","Jwax-Ctrl-1","Jwax-Ctrl-2","Jwax-Ctrl-3","Jwax-Kan-1","Jwax-Kan-2","Jwax-Kan-3"))
+  physeq_meta_filtered$group = factor(physeq_meta_filtered$Sample, c("Dan-Ctrl", "Dan-Kan","Jwax-Ctrl","Jwax-Kan"))
   
   # Plot 
-  ggplot(physeq_meta_filtered, aes(x = group, y = Abundance.average, fill = get(ml))) + 
+  ggplot(physeq_meta_filtered, aes(x = Sample, y = Abundance.average, fill = get(ml))) + 
     #facet_grid(.~subject) +
-    geom_bar(stat = "identity") +
+    geom_bar(position="fill",stat = "identity") +
     scale_fill_manual(values = my_colors) +
     # Remove x axis title
     theme(axis.title.x = element_blank()) + 
@@ -384,26 +394,26 @@ ordiellipse(BC.nmds, groups=metashannon$Interaction, display="sites", kind="se",
 
 Let's explore some bar chart options. First, we'll make the classic additive bar chart for phyla in our samples
 ```{r Bar_charts}
-plot_bar(physeqshannon, fill="Phylum")
+plot_bar(physeqshannonb, fill="Genus")
 ```
 
 Remove the lines between OTUs in the bars
 ```{r}
-plot_bar(physeqshannon, fill="Phylum") + geom_bar(aes(color=Phylum, fill=Phylum), stat="identity", position="stack")
+plot_bar(physeqshannonb, fill="Genus") + geom_bar(aes(color=Phylum, fill=Phylum), stat="identity", position="stack")
 ```
 
 And only showing the top xxx most abundant phyla
 ```{r}
 #Sort the Phyla by abundance and pick the top 5
-top5P.names = sort(tapply(taxa_sums(physeqinvsimpson), tax_table(physeqinvsimpson)[, "Phylum"], sum), TRUE)[1:5]
-top10P.names = sort(tapply(taxa_sums(physeqinvsimpson), tax_table(physeqinvsimpson)[, "Phylum"], sum), TRUE)[1:10]
-top5G.names = sort(tapply(taxa_sums(physeqinvsimpson), tax_table(physeqinvsimpson)[, "Genus"], sum), TRUE)[1:5]
-top10G.names = sort(tapply(taxa_sums(physeqinvsimpson), tax_table(physeqinvsimpson)[, "Genus"], sum), TRUE)[1:10]
+top5P.names = sort(tapply(taxa_sums(physeqinvsimpsonb), tax_table(physeqinvsimpsonb)[, "Phylum"], sum), TRUE)[1:5]
+top10P.names = sort(tapply(taxa_sums(physeqinvsimpsonb), tax_table(physeqinvsimpsonb)[, "Phylum"], sum), TRUE)[1:10]
+top5G.names = sort(tapply(taxa_sums(physeqinvsimpsonb), tax_table(physeqinvsimpsonb)[, "Genus"], sum), TRUE)[1:5]
+top10G.names = sort(tapply(taxa_sums(physeqinvsimpsonb), tax_table(physeqinvsimpsonb)[, "Genus"], sum), TRUE)[1:10]
 #Cut down the physeq.tree data to only the top 10 Phyla
-top5P = subset_taxa(physeqinvsimpson, Phylum %in% names(top5P.names))
-top5G = subset_taxa(physeqinvsimpson, Genus %in% names(top5G.names))
-top10P = subset_taxa(physeqinvsimpson, Phylum %in% names(top10P.names))
-top10G = subset_taxa(physeqinvsimpson, Genus %in% names(top10G.names))
+top5P = subset_taxa(physeqinvsimpsonb, Phylum %in% names(top5P.names))
+top5G = subset_taxa(physeqinvsimpsonb, Genus %in% names(top5G.names))
+top10P = subset_taxa(physeqinvsimpsonb, Phylum %in% names(top10P.names))
+top10G = subset_taxa(physeqinvsimpsonb, Genus %in% names(top10G.names))
 #Plot
 plot_bar(top10P, fill="Phylum") + geom_bar(aes(fill=Phylum), stat="identity", position="stack")
 plot_bar(top10G, fill="Genus") + geom_bar(aes(fill=Genus), stat="identity", position="stack") + scale_color_brewer(palette="Rainbow")
@@ -424,9 +434,9 @@ plot_bar(top5G, x="Genus", fill="Genus", facet_grid = ~Genus) + geom_bar(aes(fil
 We're going to just look at the 20 most abundant OTUs to make it more readable.
 ```{r Heat_maps}
 #Sort OTUs by abundance and pick the top 20
-top20OTU.names = names(sort(taxa_sums(physeqinvsimpson), TRUE)[1:20])
+top20OTU.names = names(sort(taxa_sums(physeqinvsimpsonb), TRUE)[1:20])
 #Cut down the physeq.tree data to only the top 10 Phyla
-top20OTU = prune_taxa(top20OTU.names, physeqinvsimpson)
+top20OTU = prune_taxa(top20OTU.names, physeqinvsimpsonb)
 
 top20OTU
 top20OTU@sam_data = sample_data(metashannon)
@@ -483,21 +493,21 @@ https://rpubs.com/michberr/randomforestmicrobe
 install.packages("randomForest")
 library(randomForest)
 #Check how many OTUs you have. If you have more than 1000, you may want to filter out rare OTUs, as shown below.
-ntaxa(physeqshannon)
-ntaxa(physeqinvsimpson)
+ntaxa(physeqshannonb)
+ntaxa(physeqinvsimpsonb)
 # Set prunescale 
 prunescale = 0.0001
-seq_depth = sample_sums(physeqshannon)[1]
+seq_depth = sample_sums(physeqshannonb)[1]
 # Prune out rare OTUs by mean relative abundance set by prunescale
-tax.mean <- taxa_sums(physeqshannon)/nsamples(physeqshannon)
+tax.mean <- taxa_sums(physeqshannonb)/nsamples(physeqshannonb)
 
 #Select the samples we want to compare
 
 #Thor, How to run this and how to get the top 300 taxa??? show heatmap blogpost
 
 rf.samples = c("Control", "Kanamycin")
-physeq.prune <- prune_taxa(tax.mean > prunescale*seq_depth, physeqshannon)
-
+physeq.prune <- prune_taxa(tax.mean > prunescale*seq_depth, physeqshannonb)
+physeq.prune <- prune_taxa(tax.mean > prunescale*seq_depth, physeqshannonb)
 physeq.prune@otu_table = physeq.prune@otu_table * 2 + 1
 physeq.prune
 
@@ -581,7 +591,7 @@ Now make the phyloseq object:
 ```{r}
 OTU.physeq = otu_table(as.matrix(OTU.clean2), taxa_are_rows=FALSE)
 tax.physeq = tax_table(as.matrix(tax.clean))
-meta.physeq = sample_data(metashannon)
+meta.physeq = sample_names(metashannon)
 ```
 
 We then merge these into an object of class phyloseq.
