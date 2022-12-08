@@ -3,20 +3,11 @@ title: "Lefse analysis in R"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-# Plotting lefse data
+## Plotting lefse data
 
+```{r}
 library(ggplot2)
 ```
-# also ran ggthemr WP1 cols to get correct colours per tmt
-
-# Using lefse_summary file output from mothur, trim data to 
-# p < 0.01 & then choose some cut off of LDA vals. I used LDA > 3.5
-
-# in excel i had ordered this data accroding to treatment (ie sample day)
-# and then within those groupings I ordered according to LDA score (big to small). 
-# makes final plot pretier. Probably a very simple way to do this in R
-# but I didnt have time to figure out how :?
 
 # read in data. 
 ```{r}
@@ -36,7 +27,7 @@ LFKA$OTU <- factor(LFKA$OTU, levels = LFKA$OTU)
 LFDJ$OTU <- factor(LFDJ$OTU, levels = LFDJ$OTU)
 ```
 
-# in fact, i want rev of this as make plot easier to interpret
+# in fact, i want reverse of this since it makes the plot easier to interpret
 
 ```{r}
 LFKA$OTU <- factor(LFKA$OTU, levels = rev(LFKA$OTU))
@@ -53,11 +44,9 @@ dj <- ggplot(LFDJ, aes(x=OTU, y=LDA, fill=Class), show_guide=FALSE) +
 
 
 # Replace OTU### with tax info:
-# using concatenate in excel to add "" , faster, make this string of 
-# tax info matching OTU id. Name this:
 
 ```{r}
-## Have to make a vector with the names of the taxa matching each significant OTU
+## Make a vector with the names of the taxa matching each significant OTU
 
 head(tax.clean)
 myLabscd <- tax.clean
@@ -70,7 +59,7 @@ DJL <- dj + scale_x_discrete(labels=myLabscd$Family, position = "top")
 ```
 
 
-## change font colour size etc
+# change font, color, size, etc.
 ```{r}
 k = KAL + theme_gray() +
   theme(axis.text.x=element_text(hjust=10, size=8, vjust=0.1, colour="black")) +
@@ -97,8 +86,5 @@ plot(k +
 plot(d +
        labs(title = "Family Differences between Danville (R) and Jwax (S) Strains (LDA > 3.5)", size=4)) 
 ```
-
-
-# print & save as pdf 
 
 
