@@ -12,7 +12,7 @@ editor_options:
 always_allow_html: yes
 ---
 
-```{r setup, include=FALSE}
+```{r}
 knitr::opts_chunk$set(echo = TRUE)
 
 knitr::opts_knit$set(root.dir = '~/C:/Users/xcwol/Downloads/ANSC595-project-German-cockroach-gut-microbiome-master/ANSC595-project-German-cockroach-gut-microbiome-master/microbiome files"')
@@ -51,18 +51,18 @@ library(VennDiagram)
 # Clean up the data
 
 # OTU table
-We need to use the "Group" column as the row names so that it will match our metadata
+# We need to use the "Group" column as the row names so that it will match our metadata
 ```{r}
 row.names(OTU) = OTU$Group
 ```
 
-# We then need to remove the "label", "numOTUs", and "Group" columns as they are not OTU counts
+# We then need to remove the "label", "numOTUs", and "Group" columns since they are not OTU counts:
 ```{r}
 OTU.clean = OTU[,-which(names(OTU) %in% c("label", "numOtus", "Group"))]
 ```
 
-# Taxonomy table
-For the taxonomy table, we name the rows by the OTU #
+# Taxonomy table:
+# For the taxonomy table, we name the rows by the OTU #
 ```{r}
 row.names(tax) = tax$OTU
 ```
@@ -78,7 +78,7 @@ tax.clean$Taxonomy <- gsub("[(]\\d*[)]",replacement="",x=tax.clean$Taxonomy)
 tax.clean = separate(tax.clean, Taxonomy, into = c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species", "Strain"), sep=";")
 ```
 
-# We then remove the "Size" and "Strain" columns as well as "OTU" since these are now the row names
+# Then remove the "Size" and "Strain" columns as well as "OTU" since these are now the row names
 ```{r}
 tax.clean = tax.clean[,-which(names(tax.clean) %in% c("Size", "Strain", "OTU"))]
 tax.clean2 <- gsub("[(]\\d*[)]",replacement="",x=tax.clean)
@@ -92,13 +92,12 @@ To make viewing and using the data easier, we will make sure our tables have sam
 OTU.clean = OTU.clean[order(row.names(OTU.clean)),]
 ```
 
-# Set seed
-
+# Set seed tro ensure randomness:
 ```{r}
 set.seed(34343)
 ```
 
-# Alpha-diversity
+# Alpha-diversity:
 
 # Explore alpha metrics
 ```{r}
@@ -115,8 +114,6 @@ hist(metashannon$shannon, main="Shannon diversity", xlab="", breaks=10)
 shapiro.test(metainvsimpson$invsimpson)
 shapiro.test(metashannon$shannon)
 ```
-
-We see that, as expected from the graphs, none are normal.
 
 ##Categorical variables
 
@@ -165,7 +162,6 @@ plot(invsimpson)
 ```
 
 **Non-normally distributed metrics**
-
 ```{r}
 kruskal.test(invsimpson ~ Interaction, data=metainvsimpson)
 kruskal.test(shannon ~ Interaction, data=metashannon)
@@ -187,39 +183,39 @@ Jac.nmds = metaMDS(OTU.clean, distance="jaccard", k=2, trymax=1000)
 # Plot the nMDS with different colors for your different groups of interest, add colors
 ```{r}
 par(mfrow = c(1, 1))
-#Create a blank plot for the nmds
+# Create a blank plot for the nmds
 plot(BC.nmds$points, type="p", main="Bray-Curtis",xlim = c(-1.0, 1.0), ylim = c(-1.5, 1.5)) 
-#Add the points colored by group
+# Add the points colored by group
 points(BC.nmds, display="sites", pch=20, col=c("Red", "Red", "Red","Magenta","Magenta","Magenta","Blue","Blue","Blue","cyan","cyan","cyan"))
-#Add a legend
+# Add a legend
 legend(-0.75, 0.45, legend=c("Dan Ctrl","Dan Kan","Jw Ctrl","Jw Kan"), col=c("Red","Magenta","Blue","cyan"), pch=20)
 
 plot(Jac.nmds$points, type="p", main="Jaccard",xlim = c(-1.0, 1.0), ylim = c(-1.5, 1.5))
-#Add the points colored by group
+# Add the points colored by group
 points(Jac.nmds, pch=20, col=c("Red", "Red", "Red","Magenta","Magenta","Magenta","Blue","Blue","Blue","cyan","cyan","cyan"))
-#Add a legend
+# Add a legend
 legend(0.75, 0.45, legend=c("Dan Ctrl","Dan Kan","Jw Ctrl","Jw Kan"), col=c("Red","Magenta","Blue","cyan"), pch=20)
 ```
 
 # 3D plots
+# Calculate the Bray-Curtis nMDS for 3-axis:
 ```{r}
-# Calculate the Bray-Curtis nMDS for 3-axis
 BC.nmds.3D = metaMDS(OTU.clean, distance="bray", k=3, trymax=1000)
 ```
 
-# Extract x-y-z values for this nmds
+# Extract x-y-z values for this nmds:
 ```{r}
 BCxyz = scores(BC.nmds.3D, display="sites")
 BCxyz
 ```
 
-# Plot the xyz coordinates and color by group
+# Plot the xyz coordinates and color by group:
 ```{r}
 plot_ly(x=BCxyz[,1], y=BCxyz[,2], z=BCxyz[,3], type="scatter3d", mode="markers", color=metashannon$group[1:12], colors=c("Red","magenta","Blue","cyan"))
 ```
 
 # Phylogentic-based metrics
-The most common of this type of beta-diversity metrics is UniFrac.
+# (The most common of this type of beta-diversity metrics is UniFrac)
 
 # Create physeq object
 # Make a `phyloseq` object which includes the OTU.clean, meta, and tax.clean data.
@@ -258,18 +254,18 @@ physeqshannon.tree = merge_phyloseq(taxa_names(physeqshannonb), NJ.tree)
 physeqinvsimpson.tree = merge_phyloseq(taxa_names(physeqinvsimpsonb), NJ.tree)
 ```
 
-# We can look at this object and see its components.
+# We can look at this object and see its components:
 ```{r}
 physeqshannon.tree
 physeqinvsimpson.tree
 ```
 
+# Plots:
 ```{r}
 plot_tree(physeqshannon.tree, label.tips="taxa_names", ladderize="left", plot.margin=0.3)
 plot_heatmap(physeqshannonb, taxa.label = "Genus")
 ## top20OTU is created in line 496. Either run the chunk on line 496 first or change the heatmap plot below
 plot_heatmap(top20OTU, taxa.label = "Genus",low="white", high="purple", na.value="grey")
-
 
 plot_bar(physeqshannonb, x="Sample", fill="Phylum") + geom_bar(aes(color=Phylum, fill=Phylum), stat="identity", position="stack")
 plot_bar(physeqshannonb, x="Sample", fill="Family") + geom_bar(aes(color=Family, fill=Family), stat="identity", position="stack")
@@ -287,7 +283,7 @@ my_colors <- c(
   "#8569D5", "#5E738F","#D1A33D", "#8A7C64", "#599861", "black"
 )
 
-# If you want different taxonomic level, find and replace the taxonomic level listed here
+# If you want different taxonomic level, find and replace the taxonomic level listed here:
 my_level <- c("Genus")
 #rm(taxa.summary)
 
@@ -344,7 +340,7 @@ While nMDS gives us a visual of beta-diversity, it does not test for statistical
 # Calculate distance and save as a matrix. **Note**: adonis cannot handle NA or blanks in data. Subset to only samples with complete metadata before running `vegdist`.
 ```{r}
 BC.dist=vegdist(OTU.clean, distance="bray")
-#Run PERMANOVA on distances.
+# Run PERMANOVA on distances.
 adonis(BC.dist ~ Treatment*Strain, data = metashannon, permutations = 1000)
 adonis(BC.dist ~ Treatment*Strain, data = metainvsimpson, permutations = 1000)
 ```
@@ -502,8 +498,8 @@ predictors <- (otu_table(physeq.prune))
 dim(predictors)
 ```
 
+# Make one column for our outcome/response variable:
 ```{r}
-# Make one column for our outcome/response variable 
 response <- as.factor(sample_data(physeq.prune)$Treatment)
 
 # Combine them into 1 data frame
@@ -514,13 +510,13 @@ rf.data <- data.frame(response, predictors)
 
 # Results:
 ```{r}
-set.seed(23456)
+set.seed(23456) # ensures randomness
 
 physeq.classify <- randomForest(response~., data = rf.data, ntree = 100)
 print(physeq.classify)
 ```
 
-In most statistical learning algorithms, the data needs to be split up into “training” and “test” data. The idea is to train the model on one set of data and test it on a naive set of data. Random forests are nice because you have a built-in way of estimating the model error. Since only ~2/3 of the data is used everytime we bootstrap our samples for construction of the kth tree, we can use the remaining ~1/3 of the data (called the out of bag samples) to test model error: Our out of bag error is 6.25% .
+# In most statistical learning algorithms, the data needs to be split up into “training” and “test” data. The idea is to train the model on one set of data and test it on a naive set of data. Random forests are nice because you have a built-in way of estimating the model error. Since only ~2/3 of the data is used everytime we bootstrap our samples for construction of the kth tree, we can use the remaining ~1/3 of the data (called the out of bag samples) to test model error: Our out of bag error is 6.25%
 
 # What variables are stored in the output?
 ```{r}
@@ -528,7 +524,7 @@ names(physeq.classify)
 ```
 
 # Plots:
-Lets make some plots of the most important variables in our model. For a classification tree, variable importance is measured by mean decrease in GINI coefficient (measure of node purity).
+# Let's make some plots of the most important variables in our model. For a classification tree, variable importance is measured by mean decrease in GINI coefficient (measure of node purity).
 
 # Make a data frame with predictor names and their importance
 ```{r}
@@ -568,7 +564,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install("DESeq2")
 ```
 
-# To use DESeq, we need no zeros in our OTU table. So we will edit the table by multiplying by 2 and + 1
+# To use DESeq, we can't have zeros in our OTU table. So we will edit the table by multiplying by 2 and + 1
 ```{r}
 OTU.clean2 <- OTU.clean * 2 + 1
 ```
@@ -596,7 +592,6 @@ diagdds = DESeq(diagdds, test="Wald", fitType="parametric")
 ```
 
 # Investigate test results table
-
 ```{r}
 my_contrast = c("Treatment","Control", "Kanamycin")
 res = results(diagdds, contrast = my_contrast, cooksCutoff = FALSE)
@@ -607,7 +602,7 @@ sigtab = cbind(as(sigtab, "data.frame"), as(tax_table(physeq_deseq)[rownames(sig
 head(sigtab)
 ```
 
-# Volcano Plot
+# Volcano Plot:
 ```{r}
 #reset par
 par(mfrow=c(1,1))
@@ -637,4 +632,3 @@ DESeq_fig = ggplot(sigtab, aes(x=Genus, y = log2FoldChange, color=Phylum)) + geo
 plot(DESeq_fig)
 ```
 
-#########################################################################
