@@ -6,7 +6,7 @@ output: html_document
 ## Plotting lefse data
 
 ```{r}
-library(ggplot2)
+library("ggplot2")
 ```
 
 # read in data. 
@@ -46,7 +46,7 @@ dj <- ggplot(LFDJ, aes(x=OTU, y=LDA, fill=Class), show_guide=FALSE) +
 # Replace OTU### with tax info:
 
 ```{r}
-## Make a vector with the names of the taxa matching each significant OTU
+# Make a vector with the names of the taxa matching each significant OTU
 
 head(tax.clean)
 myLabscd <- tax.clean
