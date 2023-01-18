@@ -1,36 +1,23 @@
 if (!requireNamespace("BiocManager", quietly = TRUE))
-  
   install.packages("BiocManager")
 
 BiocManager::install(version = "3.10")
-
-if (!requireNamespace("BiocManager", quietly = TRUE))
-  
-  install.packages("BiocManager")
-
 BiocManager::install("phyloseq")
-
 
 
 #Other packages
 
-install.packages("ape")
-
-install.packages("phangorn")
-
-install.packages("VennDiagram")
-
-library(ape)
-library(dplyr)
-library(ggplot2)
-library(gplots)
-library(lme4)
-library(phangorn)
-library(phyloseq)
-library(plotly)
-library(tidyr)
-library(vegan)
-library(VennDiagram)
+library("ape")
+library("dplyr")
+library("ggplot2")
+library("gplots")
+library("lme4")
+library("phangorn")
+library("phyloseq")
+library("plotly")
+library("tidyr")
+library("vegan")
+library("VennDiagram")
 
 setwd("C:/Users/xcwol_000/Downloads")
 
