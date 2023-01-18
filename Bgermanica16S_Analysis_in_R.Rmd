@@ -21,28 +21,23 @@ knitr::opts_knit$set(root.dir = '~/C:/Users/xcwol/Downloads/ANSC595-project-Germ
 ```{r}
 source("https://bioconductor.org/biocLite.R")
 BiocManager::install()
-BiocManager("phyloseq")
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
 BiocManager::install(version = "3.12")
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
 BiocManager::install("phyloseq")
 ```
 
 # Load packages
 ```{r Load packages, results="hide"}
-library(ape)
-library(dplyr)
-library(ggplot2)
-library(gplots)
-library(lme4)
-library(phangorn)
-library(phyloseq)
-library(plotly)
-library(tidyr)
-library(vegan)
-library(VennDiagram)
+library("ape")
+library("dplyr")
+library("ggplot2")
+library("gplots")
+library("lme4")
+library("phangorn")
+library("phyloseq")
+library("plotly")
+library("tidyr")
+library("vegan")
+library("VennDiagram")
 ```
 
 ##Load Data
@@ -121,12 +116,13 @@ shapiro.test(metashannon$shannon)
 
 # Does treatment or strain impact the Shannon diversity of the fecal microbiota?
 ```{r}
-# Run the ANOVA and save it as an object
+# Run the ANOVA and save it as an object:
 aov.shannon.interaction = aov(shannon ~ Treatment*Strain, data=metashannon)
 aov.shannon.traits = aov(shannon ~ Treatment+Strain, data=metashannon)
 aov.invsimpson.interaction = aov(invsimpson ~ Treatment*Strain, data=metainvsimpson)
 aov.invsimpson.traits = aov(invsimpson ~ Treatment+Strain, data=metainvsimpson)
-#Call for the summary of that ANOVA, which will include P-values
+
+#Call for the summary of that ANOVA, which will include P-values:
 summary(aov.shannon.interaction)
 summary(aov.shannon.traits)
 summary(aov.invsimpson.interaction)
@@ -161,7 +157,7 @@ plot(invsimpson)
 
 ```
 
-**Non-normally distributed metrics**
+# Non-normally distributed metrics
 ```{r}
 kruskal.test(invsimpson ~ Interaction, data=metainvsimpson)
 kruskal.test(shannon ~ Interaction, data=metashannon)
@@ -557,7 +553,6 @@ Adapted from https://joey711.github.io/phyloseq-extensions/DESeq2.html
 # First load DESeq2:
 ```{r}
 if (!requireNamespace("BiocManager", quietly = TRUE))
-
     install.packages("BiocManager")
 
  
@@ -604,12 +599,11 @@ head(sigtab)
 
 # Volcano Plot:
 ```{r}
-#reset par
-par(mfrow=c(1,1))
+par(mfrow=c(1,1))   # reset par
 # Make a basic volcano plot
 with(res, plot(log2FoldChange, -log10(pvalue), pch=20, main="Volcano plot", xlim=c(-15,15)))
 
-# Add colored points: blue if padj<0.01, red if log2FC>1 and padj<0.05)
+# Add colored points: (blue if padj < 0.01, red if log2FC > 1 and padj < 0.05)
 with(subset(res, padj<.01 ), points(log2FoldChange, -log10(pvalue), pch=20, col="blue"))
 with(subset(res, padj<.01 & abs(log2FoldChange)>2), points(log2FoldChange, -log10(pvalue), pch=20, col="red"))
 ```
