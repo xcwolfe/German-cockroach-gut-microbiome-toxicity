@@ -1,14 +1,14 @@
 # German-cockroach-gut-microbiome-toxicity
 This repository includes the necessary files to run Mothur and subsequent R commands for the journal article titled: "Differential Toxicity and Microbial Responses to Antibiotic Treatments by Insecticide-resistant and Susceptible Cockroach Strains (Blattella germanica L.)"
 
-Mothur pipeline log
-Before mothur:
+# Mothur pipeline log
+# Before mothur:
 
 Create an excel sheet called “analysis”
 
 •	Makes excel sheet of fastq files to perform make.file
 
-Mothur steps:
+# Mothur steps:
 
 `mothur > make.file(inputdir=., type=fastq, prefix=analysis)`
 
@@ -130,7 +130,7 @@ Mothur steps:
 
 •	OTU table complete!
 
-Analysis:
+# Analysis:
 
 `mothur > rename.file(taxonomy=analysis.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.opti_mcc.0.03.cons.taxonomy, shared=analysis.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.opti_mcc.shared)`
 
@@ -144,7 +144,7 @@ Analysis:
 
 •	Jwax Kan 3 is our smallest dataset at 24390 sequences. We will make a subsample of all our data using this parameter
 
-Lefse:
+# Lefse:
 
 Created straindesign.txt in notepad:
 
