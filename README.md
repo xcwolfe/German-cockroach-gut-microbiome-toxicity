@@ -5,6 +5,7 @@ Mothur pipeline log
 Before mothur:
 
 Create an excel sheet called “analysis”
+
 •	Makes excel sheet of fastq files to perform make.file
 
 Mothur steps:
