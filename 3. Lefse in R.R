@@ -9,7 +9,7 @@ output: html_document
 library("ggplot2")
 ```
 
-# read in data. 
+# Read in data:
 ```{r}
 LFKA <- read.table("analysis.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.opti_mcc.0.03.AvsKexcel35.txt", header = TRUE, sep="\t" )
 LFDJ <- read.table("analysis.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.opti_mcc.0.03.DvsJexcel35.txt", header = TRUE, sep="\t" )
@@ -20,15 +20,13 @@ head(LFDJ)
 ```
 
 
-# set order to be by order of OTUs in original file
-
+# Set order to be by order of OTUs in original file:
 ```{r}
 LFKA$OTU <- factor(LFKA$OTU, levels = LFKA$OTU)
 LFDJ$OTU <- factor(LFDJ$OTU, levels = LFDJ$OTU)
 ```
 
-# in fact, i want reverse of this since it makes the plot easier to interpret
-
+# In fact, i want reverse of this since it makes the plot easier to interpret:
 ```{r}
 LFKA$OTU <- factor(LFKA$OTU, levels = rev(LFKA$OTU))
 LFDJ$OTU <- factor(LFDJ$OTU, levels = rev(LFDJ$OTU))
@@ -44,22 +42,21 @@ dj <- ggplot(LFDJ, aes(x=OTU, y=LDA, fill=Class), show_guide=FALSE) +
 
 
 # Replace OTU### with tax info:
-
 ```{r}
-# Make a vector with the names of the taxa matching each significant OTU
+# Make a vector with the names of the taxa matching each significant OTU:
 
 head(tax.clean)
 myLabscd <- tax.clean
 ```
 
-# then add these labels to the to plot 
+# Then add these labels to the to plot:
 ```{r}
 KAL <- ka + scale_x_discrete(labels=myLabscd$Family, position = "top")
 DJL <- dj + scale_x_discrete(labels=myLabscd$Family, position = "top")
 ```
 
 
-# change font, color, size, etc.
+# Change font, color, size, etc.
 ```{r}
 k = KAL + theme_gray() +
   theme(axis.text.x=element_text(hjust=10, size=8, vjust=0.1, colour="black")) +
@@ -86,5 +83,4 @@ plot(k +
 plot(d +
        labs(title = "Family Differences between Danville (R) and Jwax (S) Strains (LDA > 3.5)", size=4)) 
 ```
-
 
