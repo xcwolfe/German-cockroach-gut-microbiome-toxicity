@@ -1,15 +1,6 @@
 ---
 title: "B. germanica microbiome analysis in R"
-author: "Zachery Wolfe", "Kim McFarland"
-date: "2021"
-output:
-  html_document: 
-    toc: true
-    toc_float: true
-  pdf_document: default
-editor_options: 
-  chunk_output_type: console
-always_allow_html: yes
+output: html_document
 ---
 
 ```{r}
@@ -40,7 +31,7 @@ library("vegan")
 library("VennDiagram")
 ```
 
-##Load Data
+## Load Data
 # See "Microbiota_Analysis_in_R_setup.R"
 
 # Clean up the data
@@ -137,9 +128,9 @@ TukeyHSD(aov.invsimpson.interaction)
 
 # Plot the data
 ```{r}
-#Return the plot area to 1x1
+# Return the plot area to 1x1
 par(mfrow = c(1, 1))
-#Plot
+# Plot
 boxplot(shannon ~ Interaction, data=metashannon, ylab="Shannon's diversity")
 boxplot(invsimpson ~ Interaction, data=metainvsimpson, ylab="Inverse Simpson's diversity")
 
@@ -613,6 +604,7 @@ theme_set(theme_bw())
 scale_fill_discrete <- function(palname = "Set1", ...) {
     scale_fill_brewer(palette = palname, ...)
 }
+
 # Phylum order
 x = tapply(sigtab$log2FoldChange, sigtab$Phylum, function(x) max(x))
 x = sort(x, TRUE)
@@ -625,4 +617,3 @@ DESeq_fig = ggplot(sigtab, aes(x=Genus, y = log2FoldChange, color=Phylum)) + geo
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
 plot(DESeq_fig)
 ```
-
