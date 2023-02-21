@@ -145,11 +145,9 @@ Create an excel sheet called “analysis” - this is simply an excel sheet of f
 
 # Lefse:
 
-Created straindesign.txt in notepad:
+Create straindesign.txt:
 
-•	Created straindesign using interactiondesign and editing the last column
-
-•	Removed dashes in straindesign in notepad
+•	Created straindesign using interactiondesign and editing the last column (removed dashes in straindesign objects)
 
 `mothur > lefse(shared=analysis.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.opti_mcc.shared, design=straindesign.txt)`
 
