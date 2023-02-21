@@ -3,12 +3,9 @@ This repository includes the necessary files to run Mothur and subsequent R comm
 
 I have included bullet points underneath each command to indicate the purpose of performing the command above. You may have to adjust the commands and/or parameters used based on the unique details of your project.
 
-# Mothur pipeline log
 # Before mothur:
 
-Create an excel sheet called “analysis”
-
-•	Makes excel sheet of fastq files to perform make.file
+Create an excel sheet called “analysis” - this is simply an excel sheet of fastq files to perform the make.file function
 
 # Mothur steps:
 
