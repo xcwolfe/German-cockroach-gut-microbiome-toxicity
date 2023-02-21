@@ -5,7 +5,7 @@ I have included bullet points underneath each command to indicate the purpose of
 
 # Before mothur:
 
-Create an excel sheet called “analysis” - this is simply an excel sheet of fastq files to perform the make.file function
+Create an excel sheet called “analysis” - this is simply an excel sheet of fastq files to perform the make.file function (see analysis.xlsx)
 
 # Mothur steps:
 
