@@ -1,7 +1,9 @@
-# German-cockroach-gut-microbiome-toxicity
+# German cockroach gut microbiome toxicity
 This repository includes the necessary files to run Mothur and subsequent R commands for the journal article titled: "Differential Toxicity and Microbial Responses to Antibiotic Treatments by Insecticide-resistant and Susceptible Cockroach Strains (Blattella germanica L.)"
 
 I have included bullet points underneath each command to indicate the purpose of performing the command above. You may have to adjust the commands and/or parameters used based on the unique details of your project.
+
+Run the R markdowns in order (labeled 1-3) for best results.
 
 # Before mothur:
 
